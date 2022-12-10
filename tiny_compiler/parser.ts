@@ -4,7 +4,7 @@ export enum NodeType {
   NUMBER_LITERAL = "NumberLiteral",
   STRING_LITERAL = "StringLiteral",
   CALL_EXPRESSION = "CallExpression",
-  PROGRAM = "program",
+  PROGRAM = "Program",
 }
 
 export type Root = {

@@ -1,5 +1,7 @@
+import { compiler } from ".";
 import { parser } from "./parser";
 import { tokenizer, Token, TokenType } from "./tokenizer";
+import { transformer } from "./transformer";
 const assert = require("assert");
 
 const input = "(add 2 (subtract 4 2))";
@@ -54,4 +56,56 @@ assert.deepStrictEqual(
   parser(tokens),
   ast,
   "Parser should turn `tokens` array into `ast`"
+);
+
+const newAst = {
+  type: "Program",
+  body: [
+    {
+      type: "ExpressionStatement",
+      expression: {
+        type: "CallExpression",
+        callee: {
+          type: "Identifier",
+          name: "add",
+        },
+        arguments: [
+          {
+            type: "NumberLiteral",
+            value: "2",
+          },
+          {
+            type: "CallExpression",
+            callee: {
+              type: "Identifier",
+              name: "subtract",
+            },
+            arguments: [
+              {
+                type: "NumberLiteral",
+                value: "4",
+              },
+              {
+                type: "NumberLiteral",
+                value: "2",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+};
+
+assert.deepStrictEqual(
+  transformer(ast as any),
+  newAst,
+  "Transformer should turn `ast` into a `newAst`"
+);
+
+const output = `add("2", subtract("4", "2"));`;
+assert.deepStrictEqual(
+  compiler(input),
+  output,
+  "Compiler should turn `input` into `output`"
 );

@@ -1,8 +1,14 @@
 import { Node, Root, NodeType } from "./parser";
 
+type VisitorLiteral =
+  | NodeType.CALL_EXPRESSION
+  | NodeType.STRING_LITERAL
+  | NodeType.PROGRAM
+  | NodeType.NUMBER_LITERAL;
+
 type Visitor = {
-  [key in keyof NodeType]?: {
-    entry?: (node: Root | Node, parent: Root | Node | null) => void;
+  [key in VisitorLiteral]?: {
+    enter?: (node: Root | Node, parent: Root | Node | null) => void;
     exit?: (node: Root | Node, parent: Root | Node | null) => void;
   };
 };
@@ -10,12 +16,12 @@ type Visitor = {
 export function traverser(ast: Root, visitor: Visitor) {
   traverseNode(ast, null);
 
-  function traverseArray(array: Node[], parent) {
+  function traverseArray(array: Node[], parent: any) {
     array.forEach((child) => {
       traverseNode(child, parent);
     });
   }
-  function traverseNode(node: Root | Node, parent) {
+  function traverseNode(node: Root | Node, parent: any) {
     let methods = visitor[node.type];
 
     if (methods && methods.enter) {
